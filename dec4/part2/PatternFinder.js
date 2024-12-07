@@ -1,3 +1,4 @@
+const { getMatrix } = require('../../utils/array.js');
 class PatternFinder {
   patterns;
   matrix;
@@ -12,7 +13,7 @@ class PatternFinder {
   };
 
   getLettersMatrix = (input) => {
-    return input.split(new RegExp("[\r\n]", "g")).map((line) => line.split(""));
+    return getMatrix(input)
   };
 
   scan = () => {

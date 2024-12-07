@@ -1,3 +1,4 @@
+const { getMatrix } = require('../../utils/array.js');
 class WordFinder {
   word;
   matrix;
@@ -12,7 +13,7 @@ class WordFinder {
   }
 
   getLettersMatrix = (input) => {
-    return input.split(new RegExp("[\r\n]", "g")).map((line) => line.split(""));
+    return getMatrix(input);
   };
 
   scan = () => {
