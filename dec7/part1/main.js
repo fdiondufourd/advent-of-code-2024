@@ -59,6 +59,7 @@ const randomPermutation = (operators, depth) => {
   return permutation.join("");
 };
 
+// too lazy to actually do the permutations myself...this a awful and ineffective!
 const createPermutations = (depth) => {
   const operators = ["*", "+"];
   const permutations = [];
