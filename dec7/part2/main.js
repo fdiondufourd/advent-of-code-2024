@@ -48,6 +48,8 @@ const computeResult = (operator, n1, n2) => {
   throw new Error("Unknown operator");
 };
 
+const permutationsMap = new Map();
+
 // I was less lazy today and implemented it correctly!
 const findPermutations = (acc, alphabet, depth) => {
   let newAcc = [];
@@ -65,11 +67,15 @@ const findPermutations = (acc, alphabet, depth) => {
 
 const possibleComputations = [];
 parsed.forEach((computation) => {
-  const permutations = findPermutations(
+  const cached = permutationsMap.get(computation.sequence.length - 1);
+
+  const permutations = cached ? cached : findPermutations(
     ["|", "*", "+"],
     ["|", "*", "+"],
     computation.sequence.length - 1
   );
+
+  permutationsMap.set(computation.sequence.length - 1, permutations);
 
   if (permutations[0].length !== computation.sequence.length - 1) {
     throw new Error("oups!");

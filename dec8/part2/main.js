@@ -16,7 +16,7 @@ const test = `............
 const reader = require("../../utils/inputReader");
 const input = reader.getInputFromArgs(process.argv);
 
-const antennaMatrix = getMatrix(test);
+const antennaMatrix = getMatrix(input);
 
 const getKey = (coord) => {
   return coord.y + ":" + coord.x;
@@ -31,6 +31,10 @@ const getLength = (coord1, coord2) => {
 var getAngleRad = (coord1, coord2) =>
   Math.atan2(coord2.y - coord1.y, coord2.x - coord1.x);
 
+function formatToPrecision(number, precision = 6) {
+  return parseFloat(number).toPrecision(precision);
+}
+
 const getLengthBetweenNodes = (antennaMatrix) => {
   const map = new Map();
   for (let i1 = 0; i1 < antennaMatrix.length; i1++) {
@@ -42,9 +46,9 @@ const getLengthBetweenNodes = (antennaMatrix) => {
           const key1 = getKey(coord1);
           const key2 = getKey(coord2);
           const length = getLength(coord1, coord2);
-          const curr = map?.get(length) ?? new Map();
+          const curr = map?.get(formatToPrecision(length)) ?? new Map();
           curr.set(key1, [...(curr?.get(key1) ?? []), key2]);
-          map.set(length, curr);
+          map.set(formatToPrecision(length), curr);
         }
       }
     }
@@ -62,7 +66,8 @@ const findAntinodesForAntenna = (
   increment,
   rotate180 = false
 ) => {
-  const nodes = lengthBetweenNodes.get(length);
+  const formattedLength = formatToPrecision(length);
+  const nodes = lengthBetweenNodes.get(formattedLength);
 
   if (!nodes) {
     return validAntinodes;
@@ -79,6 +84,7 @@ const findAntinodesForAntenna = (
     const r = rotate180
       ? getAngleRad({ y: antinode[0], x: antinode[1] }, antennaPosition)
       : getAngleRad(antennaPosition, { y: antinode[0], x: antinode[1] });
+
     if (r === rad) {
       validAntinodes.push(key);
     }
@@ -106,6 +112,8 @@ const findAntinodes = (antennaChar, antennaPosition) => {
         const length = getLength(antennaPosition, { y: i, x: j });
         const rad = getAngleRad(antennaPosition, { y: i, x: j });
 
+        validAntinodes.push(getKey(antennaPosition));
+
         findAntinodesForAntenna(
           validAntinodes,
           antennaPosition,
@@ -114,7 +122,6 @@ const findAntinodes = (antennaChar, antennaPosition) => {
           length,
           false
         );
-        console.log(validAntinodes);
         findAntinodesForAntenna(
           validAntinodes,
           antennaPosition,
@@ -123,8 +130,6 @@ const findAntinodes = (antennaChar, antennaPosition) => {
           length,
           true
         );
-
-        console.log(validAntinodes);
       }
     }
   }
@@ -139,7 +144,7 @@ for (let i = 0; i < antennaMatrix.length; i++) {
     const antennaRegex = new RegExp("[A-Za-z0-9]", "g");
     const isAntenna = antennaRegex.test(current);
     if (isAntenna) {
-        console.log(current, { y: i, x: j });
+      console.log(current, { y: i, x: j });
       const antinodes = findAntinodes(current, { y: i, x: j });
       for (let z = 0; z < antinodes.length; z++) {
         foundAntinodes[antinodes[z]] = true;

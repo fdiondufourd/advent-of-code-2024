@@ -36,13 +36,15 @@ const input = reader.getInputFromArgs(process.argv);
 
 const parsed = parseInput(input);
 
+const permutationsMap = new Map();
+
 const computeResult = (operator, n1, n2) => {
   switch (operator) {
     case "*":
       return n1 * n2;
     case "+":
       return n1 + n2;
-  }
+}
   throw new Error("Unknown operator");
 };
 
@@ -80,9 +82,13 @@ const createPermutations = (depth) => {
 
 const possibleComputations = [];
 parsed.forEach((computation) => {
-    const permutations = createPermutations(
+    const cached = permutationsMap.get(computation.sequence.length - 1);
+
+    const permutations = cached ? cached : createPermutations(
         computation.sequence.length - 1
     );
+
+    permutationsMap.set(computation.sequence.length - 1, permutations);
 
     if (permutations[0].length !== (computation.sequence.length -1)){
         throw new Error('pour!');
